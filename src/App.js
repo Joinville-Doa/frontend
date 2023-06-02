@@ -1,13 +1,8 @@
-import Login from './pages/Login'
-import './App.css';
-import AppRouter from '../AppRouter';
+import React from "react";
+import Donations from "./components/Donations";
 
-function App() {
-  return (
-    <div className="App">
-      <Login/>
-    </div>
-  );
-}
+const App = () => {
+  return <Donations />;
+};
 
 export default App;
