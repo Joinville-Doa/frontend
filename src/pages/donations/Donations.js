@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea, Grid, TextField, InputAdornment, IconButton } from "@mui/material";
-import Navbar from "./Navbar";
+import Navbar from "../../components/Navbar";
 import { useQuery, gql } from "@apollo/client";
 import Search from "@mui/icons-material/Search";
 
@@ -161,7 +161,7 @@ export default function Donations() {
           </Grid>
         ))}
       </Grid>
-      {isFetchingMore && <p>Carregando mais...</p>}
+      {isFetchingMore && <p>Carregando mais doações...</p>}
     </>
   );
 }
