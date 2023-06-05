@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -49,15 +50,25 @@ export default function Login() {
     <>
       <Navbar />
       <Box
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: 4,
+        }}
       >
-        <Typography variant="h5" component="h2" gutterBottom>
+        <Typography
+          variant="h5"
+          component="h2"
+          gutterBottom
+          sx={{ fontFamily: "Inter, sans-serif" }}
+        >
           Ainda não tem conta?
         </Typography>
         <Button
           variant="contained"
           color="primary"
-          href="https://www.figma.com/file/7KwU7UoIU2iW4xSolD3h7f/Doa%C3%A7%C3%B5es---TCS?type=design&node-id=68-43&t=mpkc6DYF55IyaHKu-0"
+          href=""
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -102,18 +113,13 @@ export default function Login() {
         </form>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Link to="/caminho-para-o-arquivo">
-          <Button variant="text" color="primary" >
+        <Link to="/termos-de-uso">
+          <Button variant="text" color="primary">
             Política de privacidade
           </Button>
         </Link>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Typography variant="body1" color="text.secondary" align="center">
-          2023 ARShakir Inc. All rights reserved. -- Privacy Policy - Terms of
-          Services
-        </Typography>
-      </Box>
+      <Footer />
     </>
   );
 }

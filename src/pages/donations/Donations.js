@@ -3,10 +3,17 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { CardActionArea, Grid, TextField, InputAdornment, IconButton } from "@mui/material";
+import {
+  CardActionArea,
+  Grid,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import Navbar from "../../components/Navbar";
 import { useQuery, gql } from "@apollo/client";
 import Search from "@mui/icons-material/Search";
+import Footer from "../../components/Footer";
 
 const GET_DATA = gql`
   query Donations($limit: Int, $offset: Int) {
@@ -135,7 +142,14 @@ export default function Donations() {
       <Grid container spacing={2} style={{ padding: 50 }}>
         {filteredDonations.map((donation, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={donation.id}>
-            <Card sx={{ maxWidth: 300, marginBottom: 5, padding: 1 }}>
+            <Card
+              sx={{
+                maxHeight: 300,
+                maxWidth: 300,
+                marginBottom: 5,
+                padding: 1,
+              }}
+            >
               <CardActionArea>
                 <CardMedia
                   component="img"
@@ -146,11 +160,17 @@ export default function Donations() {
                 <CardContent>
                   <Typography
                     gutterBottom
-                    variant="h5"
-                    component="div"
-                    style={{ textAlign: "center" }}
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "300px",
+                    }}
                   >
-                    {donation.title}
+                    {donation.title.length > 22
+                      ? donation.title.substring(0, 22) + " ..."
+                      : donation.title}
                   </Typography>
                 </CardContent>
               </CardActionArea>
@@ -162,6 +182,7 @@ export default function Donations() {
         ))}
       </Grid>
       {isFetchingMore && <p>Carregando mais doações...</p>}
+      <Footer />
     </>
   );
 }
