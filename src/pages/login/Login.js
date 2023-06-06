@@ -1,8 +1,26 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { TextField, Button, Typography, Box } from "@mui/material";
+import { TextField, Button, Typography, Box, Snackbar } from "@mui/material";
+import { useMutation, gql } from "@apollo/client";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+
+const LOGIN_MUTATION = gql`
+  mutation LoginUser($email: String!, $password: String!) {
+    loginUser(input: { email: $email, password: $password }) {
+      user {
+        name
+        email
+        documentNumber
+        phone
+        dateOfBirth
+        acceptTermsOfUse
+      }
+      message
+      token
+    }
+  }
+`;
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +28,10 @@ export default function Login() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const [loginUser] = useMutation(LOGIN_MUTATION);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -23,27 +45,54 @@ export default function Login() {
     setFormError("");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (email === "") {
       setEmailError("Por favor, insira seu e-mail.");
+      return;
     }
 
     if (password === "") {
       setPasswordError("Por favor, insira sua senha.");
+      return;
     }
 
-    if (email !== "" && password !== "") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      if (!emailRegex.test(email)) {
-        setEmailError("Por favor, insira um e-mail válido.");
+    if (!emailRegex.test(email)) {
+      setEmailError("Por favor, insira um e-mail válido.");
+      return;
+    }
+
+    try {
+      const { data } = await loginUser({
+        variables: {
+          email,
+          password,
+        },
+      });
+
+      if (data.loginUser.token) {
+        localStorage.setItem("token", data.loginUser.token);
+        // window.location.href = "/";
+      }
+
+      if (data.loginUser.message) {
+        setFormError(data.loginUser.message);
+        setSnackbarOpen(true);
         return;
       }
-    } else {
-      setFormError("Por favor, insira todos os campos requisitados.");
+    } catch (error) {
+      setFormError(
+        "Ocorreu um erro ao fazer login. Por favor, tente novamente."
+      );
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -106,9 +155,13 @@ export default function Login() {
             Logar
           </Button>
           {formError && (
-            <Typography variant="body2" color="error" align="center">
-              {formError}
-            </Typography>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleSnackbarClose}
+              message={formError}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            />
           )}
         </form>
       </Box>
