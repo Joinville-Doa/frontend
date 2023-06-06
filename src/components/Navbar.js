@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import { Link } from 'react-router-dom';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -43,7 +44,8 @@ export default function PrimarySearchAppBar() {
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: "bottom",elevation: 0,
+        vertical: "bottom",
+        elevation: 0,
         horizontal: "left",
       }}
       id={menuId}
@@ -55,7 +57,9 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Login</MenuItem>
+      <Link to="/login">
+        <MenuItem onClick={handleMenuClose}>Login</MenuItem>
+      </Link>
       <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
       <MenuItem onClick={handleMenuClose}>Ver outros anúncios</MenuItem>
       <MenuItem onClick={handleMenuClose}>sair</MenuItem>
@@ -97,29 +101,31 @@ export default function PrimarySearchAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <StyledAppBar position="static">
         <Toolbar>
-          <img
-            src="/images/logo-1.png"
-            alt="Logo Joinville doa"
-            style={{ width: "150px", height: "auto" }}
-          />
+          <Link to="/">
+            <img
+              src="/images/logo-1.png"
+              alt="Logo Joinville doa"
+              style={{ width: "150px", height: "auto" }}
+            />
+          </Link>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
               edge="end"
-              aria-label="account of current user"
+              aria-label="Ver mais"
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="#000000"
             >
-              <MoreIcon />
+              <AccountCircle />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
-              aria-label="show more"
+              aria-label="Ver mais"
               aria-controls={mobileMenuId}
               aria-haspopup="true"
               onClick={handleMobileMenuOpen}
