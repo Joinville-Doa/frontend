@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -60,7 +60,9 @@ export default function PrimarySearchAppBar() {
       <Link to="/login">
         <MenuItem onClick={handleMenuClose}>Login</MenuItem>
       </Link>
-      <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
+      <Link to="/cadastro">
+        <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
+      </Link>
       <MenuItem onClick={handleMenuClose}>Ver outros anúncios</MenuItem>
       <MenuItem onClick={handleMenuClose}>sair</MenuItem>
     </Menu>

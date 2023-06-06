@@ -166,7 +166,7 @@ export default function Login() {
         </form>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Link to="/termos-de-uso">
+        <Link to="/politicas-de-uso">
           <Button variant="text" color="primary">
             Política de privacidade
           </Button>

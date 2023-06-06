@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import Donations from "./pages/donations/Donations";
 import Login from "./pages/login/Login";
+import Register from "./pages/register/Register";
 import Terms from "./pages/terms/Terms";
 
 const App = () => {
@@ -11,7 +12,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Donations />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/termos-de-uso" element={<Terms />} />
+        <Route path="/politicas-de-uso" element={<Terms />} />
+        <Route path="/cadastro" element={<Register />} />
       </Routes>
     </Router>
   )
