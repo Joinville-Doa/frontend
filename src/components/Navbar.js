@@ -57,13 +57,15 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <Link to="/login">
+      <Link to="/login" style={{ textDecoration: "none" }}>
         <MenuItem onClick={handleMenuClose}>Login</MenuItem>
       </Link>
-      <Link to="/cadastro">
+      <Link to="/cadastro" style={{ textDecoration: "none" }}>
+        <MenuItem onClick={handleMenuClose}>Registrar-se</MenuItem>
+      </Link>
+      <Link to="/nova-doacao" style={{ textDecoration: "none" }}>
         <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
       </Link>
-      <MenuItem onClick={handleMenuClose}>Ver outros anúncios</MenuItem>
       <MenuItem onClick={handleMenuClose}>sair</MenuItem>
     </Menu>
   );
@@ -92,9 +94,7 @@ export default function PrimarySearchAppBar() {
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="#000000"
-        >
-          <AccountCircle />
-        </IconButton>
+        ></IconButton>
       </MenuItem>
     </Menu>
   );
