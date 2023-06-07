@@ -141,7 +141,6 @@ function NewDonation() {
                 variant="outlined"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                minHeight="150px"
                 rows={7}
                 multiline
                 fullWidth
