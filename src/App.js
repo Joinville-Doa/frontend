@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./components/AuthProvider";
 
 import Donations from "./pages/donations/Donations";
 import Login from "./pages/login/Login";
@@ -11,18 +12,20 @@ import NewDonation from "./pages/newDonation/NewDonation";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Donations />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/politicas-de-uso" element={<Terms />} />
-        <Route path="/cadastro" element={<Register />} />
-        <Route path="/meu-perfil" element={<MyPerfil />} />
-        <Route path="/minhas-doacoes" element={<MyDonations />} />
-        <Route path="/nova-doacao" element={<NewDonation />} />
-      </Routes>
-    </Router>
-  )
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Donations />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/politicas-de-uso" element={<Terms />} />
+          <Route path="/cadastro" element={<Register />} />
+          <Route path="/meu-perfil" element={<MyPerfil />} />
+          <Route path="/minhas-doacoes" element={<MyDonations />} />
+          <Route path="/nova-doacao" element={<NewDonation />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 };
 
 export default App;

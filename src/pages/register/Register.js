@@ -412,7 +412,7 @@ export default function Register() {
               {formError}
             </Typography>
           )}
-          <Link to="/" passHref>
+          <Link to="/">
             <Button
               variant="contained"
               color="warning"

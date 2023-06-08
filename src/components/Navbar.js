@@ -1,42 +1,34 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
+import { useAuth } from "./AuthProvider";
+import { styled } from "@mui/material/styles";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
   boxShadow: "none",
+  opacity: 0.8,
 }));
 
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const { isAuthenticated, logout } = useAuth();
 
   const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleProfileMenuOpen = (event) => {
+  const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
   };
 
   const menuId = "primary-search-account-menu";
@@ -57,45 +49,79 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <Link to="/login" style={{ textDecoration: "none" }}>
-        <MenuItem onClick={handleMenuClose}>Login</MenuItem>
-      </Link>
-      <Link to="/cadastro" style={{ textDecoration: "none" }}>
-        <MenuItem onClick={handleMenuClose}>Registrar-se</MenuItem>
-      </Link>
-      <Link to="/nova-doacao" style={{ textDecoration: "none" }}>
-        <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
-      </Link>
-      <MenuItem onClick={handleMenuClose}>sair</MenuItem>
-    </Menu>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="#000000"
-        ></IconButton>
-      </MenuItem>
+      {isAuthenticated && (
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+          component={Link}
+          to="/minhas-doacoes"
+        >
+          Minhas doações
+        </MenuItem>
+      )}
+      {!isAuthenticated && (
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+          component={Link}
+          to="/cadastro"
+        >
+          Registrar-se
+        </MenuItem>
+      )}
+      {!isAuthenticated && (
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+          component={Link}
+          to="/login"
+        >
+          Entrar
+        </MenuItem>
+      )}
+      {isAuthenticated && (
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "#000000",
+          }}
+          component={Link}
+          to="/nova-doacao"
+        >
+          Doar
+        </MenuItem>
+      )}
+      {isAuthenticated && (
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "#000000",
+          }}
+          component={Link}
+          to="/meu-perfil"
+        >
+          Meu Perfil
+        </MenuItem>
+      )}
+      {isAuthenticated && <MenuItem onClick={logout}>Sair</MenuItem>}
     </Menu>
   );
 
@@ -111,34 +137,95 @@ export default function PrimarySearchAppBar() {
             />
           </Link>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="Ver mais"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="#000000"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="Ver mais"
-              aria-controls={mobileMenuId}
+              aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
+              onClick={handleMenuOpen}
               color="#000000"
             >
               <MoreIcon />
             </IconButton>
           </Box>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              justifyContent: "center",
+            }}
+            style={{ width: "80%" }}
+          >
+            {isAuthenticated ? (
+              [
+                <Typography
+                  key="doar"
+                  variant="body1"
+                  component={Link}
+                  to="/nova-doacao"
+                  onClick={handleMenuClose}
+                  className="menu-item"
+                >
+                  Doar
+                </Typography>,
+                <Typography
+                  key="minhas-doacoes"
+                  variant="body1"
+                  component={Link}
+                  to="/minhas-doacoes"
+                  onClick={handleMenuClose}
+                  className="menu-item"
+                >
+                  Minhas Doações
+                </Typography>,
+                <Typography
+                  key="meu-perfil"
+                  variant="body1"
+                  component={Link}
+                  to="/meu-perfil"
+                  onClick={handleMenuClose}
+                  className="menu-item"
+                >
+                  Meu Perfil
+                </Typography>,
+                <Typography
+                  key="sair"
+                  variant="body1"
+                  component={Link}
+                  to="/"
+                  onClick={logout}
+                  className="menu-item"
+                >
+                  Sair
+                </Typography>,
+              ]
+            ) : (
+              [
+                <Typography
+                  key="login"
+                  variant="body1"
+                  component={Link}
+                  to="/login"
+                  onClick={handleMenuClose}
+                  className="menu-item"
+                >
+                  Entrar
+                </Typography>,
+                <Typography
+                  key="cadastro"
+                  variant="body1"
+                  component={Link}
+                  to="/cadastro"
+                  onClick={handleMenuClose}
+                  className="menu-item"
+                >
+                  Registrar-se
+                </Typography>,
+              ]
+            )}
+          </Box>
         </Toolbar>
       </StyledAppBar>
-      {renderMobileMenu}
       {renderMenu}
     </Box>
   );

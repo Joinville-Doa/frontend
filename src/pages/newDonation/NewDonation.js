@@ -162,45 +162,41 @@ function NewDonation() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: 4,
-          padding: "0 20px",
-        }}
-      >
-        <Typography
-          variant="h5"
-          component="h2"
-          gutterBottom
-          sx={{
-            fontFamily: "Inter, sans-serif",
-            textAlign: "center",
-            maxWidth: "100%",
-            marginBottom: "10px",
-          }}
-        >
-          O QUE VOCÊ ESTÁ ANUNCIANDO?
-        </Typography>
-        <Divider
-          sx={{
-            width: "100%",
-            marginBottom: "20px",
-          }}
-        />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
           justifyContent: "center",
           mt: 4,
           padding: "0 20px",
           marginLeft: "150px",
           marginRight: "150px",
+          marginBottom: "250px",
         }}
       >
         <Grid>
-          <Grid item xs={12} md={6}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            style={{
+              backgroundColor: "#F5F5F5",
+              opacity: "0.8",
+              borderRadius: "10px",
+              border: "1px solid #E0E0E0",
+              padding: "40px",
+            }}
+          >
             <form onSubmit={handleSubmit}>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontFamily: "Inter, sans-serif",
+                  fontWeight: "bold",
+                  color: "#000000",
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
+              >
+                Anunciar doação
+              </Typography>
+              <Divider sx={{ mt: 2, mb: 2 }} />
               <TextField
                 type="text"
                 label="Título"
@@ -371,8 +367,8 @@ function NewDonation() {
                   }}
                 >
                   Não pedimos códigos por ligação, chat ou WhatsApp. Desconfie
-                  se alguém entrar em contato
-                  em nome da <strong>Joinville Doa</strong>.
+                  se alguém entrar em contato em nome da{" "}
+                  <strong>Joinville Doa</strong>.
                 </Typography>
               </Box>
               <Box
@@ -383,7 +379,12 @@ function NewDonation() {
                   marginBottom: 10,
                 }}
               >
-                <Button variant="contained" color="primary" type="submit" style={{minWidth: "150px"}}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  style={{ minWidth: "150px" }}
+                >
                   Salvar
                 </Button>
                 <Link to={"/"}>
@@ -391,7 +392,7 @@ function NewDonation() {
                     variant="contained"
                     color="warning"
                     sx={{ marginLeft: 10 }}
-                    style={{minWidth: "150px"}}
+                    style={{ minWidth: "150px" }}
                   >
                     Cancelar
                   </Button>
@@ -401,15 +402,6 @@ function NewDonation() {
           </Grid>
         </Grid>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          marginTop: "20px",
-        }}
-      ></Box>
       <Footer />
     </>
   );

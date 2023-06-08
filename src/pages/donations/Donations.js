@@ -128,6 +128,7 @@ export default function Donations() {
           display: "flex",
           alignItems: "center",
           backgroundColor: "#FFFFFF",
+          opacity: 0.6,
         }}
         InputProps={{
           endAdornment: (

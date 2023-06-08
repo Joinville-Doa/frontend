@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TextField, Button, Typography, Box, Snackbar } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Snackbar,
+  Divider,
+} from "@mui/material";
 import { useMutation, gql } from "@apollo/client";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { useAuth } from "../../components/AuthProvider";
 
 const LOGIN_MUTATION = gql`
   mutation LoginUser($email: String!, $password: String!) {
@@ -29,6 +37,7 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const { login } = useAuth();
 
   const [loginUser] = useMutation(LOGIN_MUTATION);
 
@@ -73,7 +82,7 @@ export default function Login() {
       });
 
       if (data.loginUser.token) {
-        localStorage.setItem("token", data.loginUser.token);
+        login(data.loginUser.token);
         // window.location.href = "/";
       }
 
@@ -100,34 +109,31 @@ export default function Login() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
-          marginTop: 4,
+          flexDirection: "column",
+          mt: 4,
+          maxWidth: "20%",
+          margin: "100px auto",
+          backgroundColor: "rgba(245, 245, 245, 0.8)",
+          border: "1px solid #E0E0E0",
+          borderRadius: "10px",
+          p: 4,
+          "@media (max-width: 600px)": {
+            maxWidth: "90%",
+          },
         }}
       >
         <Typography
           variant="h5"
-          component="h2"
+          component="h1"
           gutterBottom
-          sx={{ fontFamily: "Inter, sans-serif" }}
+          sx={{ fontFamily: "Inter, sans-serif", mb: 2 }}
         >
-          Ainda não tem conta?
+          Acesse sua conta
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          href=""
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Cadastre-se
-        </Button>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <form
-          onSubmit={handleSubmit}
-          style={{ width: "100%", maxWidth: "300px" }}
-        >
+        <Divider sx={{ width: "100%", mb: 4 }} />
+        <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <TextField
             type="text"
             label="Seu e-mail"
@@ -137,7 +143,7 @@ export default function Login() {
             onChange={handleEmailChange}
             error={Boolean(emailError)}
             helperText={emailError}
-            margin="normal"
+            sx={{ mb: 2 }}
           />
           <TextField
             type="password"
@@ -150,7 +156,12 @@ export default function Login() {
             helperText={passwordError}
             margin="normal"
           />
-          <Button variant="contained" color="primary" type="submit" fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            sx={{ mt: 2, mb: 2, width: "100%" }}
+          >
             Logar
           </Button>
           {formError && (
@@ -163,13 +174,33 @@ export default function Login() {
             />
           )}
         </form>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Link to="/politicas-de-uso">
-          <Button variant="text" color="primary">
-            Política de privacidade
+        <Box sx={{ mt: 4, display: "flex", flexDirection: "column" }}>
+          <Typography
+            variant="h5"
+            component="h2"
+            gutterBottom
+            sx={{ fontFamily: "Inter, sans-serif" }}
+          >
+            Ainda não tem conta?
+          </Typography>
+          <Divider sx={{ width: "100%", mb: 2 }} />
+          <Button
+            variant="contained"
+            color="warning"
+            component={Link}
+            to="/cadastro"
+            sx={{ width: "100%" }}
+          >
+            Cadastre-se
           </Button>
-        </Link>
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}>
+          <Link to="/politicas-de-uso">
+            <Button variant="text" color="primary">
+              Política de privacidade
+            </Button>
+          </Link>
+        </Box>
       </Box>
       <Footer />
     </>
