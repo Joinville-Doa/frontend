@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -57,11 +57,15 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <Link to="/login">
+      <Link to="/login" style={{ textDecoration: "none" }}>
         <MenuItem onClick={handleMenuClose}>Login</MenuItem>
       </Link>
-      <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Ver outros anúncios</MenuItem>
+      <Link to="/cadastro" style={{ textDecoration: "none" }}>
+        <MenuItem onClick={handleMenuClose}>Registrar-se</MenuItem>
+      </Link>
+      <Link to="/nova-doacao" style={{ textDecoration: "none" }}>
+        <MenuItem onClick={handleMenuClose}>Doar</MenuItem>
+      </Link>
       <MenuItem onClick={handleMenuClose}>sair</MenuItem>
     </Menu>
   );
@@ -90,9 +94,7 @@ export default function PrimarySearchAppBar() {
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="#000000"
-        >
-          <AccountCircle />
-        </IconButton>
+        ></IconButton>
       </MenuItem>
     </Menu>
   );

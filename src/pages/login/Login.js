@@ -29,7 +29,6 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const [loginUser] = useMutation(LOGIN_MUTATION);
 
@@ -166,7 +165,7 @@ export default function Login() {
         </form>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Link to="/termos-de-uso">
+        <Link to="/politicas-de-uso">
           <Button variant="text" color="primary">
             Política de privacidade
           </Button>
