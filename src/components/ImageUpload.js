@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Grid from "@mui/material/Grid";
 import { Box, Typography, Divider, CircularProgress } from "@mui/material";
 import { Image, CloudinaryContext, Transformation } from "cloudinary-react";
@@ -9,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default function ImageUpload({ selectedImages, onImageUpload }) {
   const [logoImage, setLogoImage] = useState(true);
-  const [isLoading, setIsLoading] = useState(false); // Novo estado para controlar o loading
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleImageUpload = async (event) => {
     const files = event.target.files;
@@ -17,13 +18,13 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
       return;
     }
 
-    setIsLoading(true); // Ativar o loading
+    setIsLoading(true);
 
     const imageUrls = [];
     for (const file of files) {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET);
+      formData.append("upload_preset", "oeayeb4o");
       formData.append("tags", ["donation", "product"]);
       formData.append("samples", `${uuidv4()}`);
 
@@ -34,12 +35,11 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
           body: formData,
         }
       );
-
       const data = await response.json();
       imageUrls.push(data.secure_url);
     }
 
-    setIsLoading(false); // Desativar o loading
+    setIsLoading(false);
 
     onImageUpload([...selectedImages, ...imageUrls]);
     setLogoImage(false);
@@ -63,7 +63,6 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
       <Divider
         sx={{
           width: "100%",
-          height: "2px",
           backgroundColor: "#DDDDDD",
           marginBottom: "20px",
         }}
@@ -382,6 +381,27 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
           </Grid>
         ))}
       </Grid>
+      <Divider sx={{ marginTop: "20px", marginBottom: "20px" }} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: "20px",
+          flexDirection: "row",
+          overflow: "hidden",
+        }}
+      >
+        <ErrorOutlineIcon sx={{ color: "#FF0000", marginLeft: "15px" }} />
+        <Typography
+          variant="body2"
+          component="p"
+          gutterBottom
+          sx={{ fontFamily: "Inter, sans-serif", marginLeft: "15px" }}
+        >
+          As imagens devem não ultrapassar o tamanho de 5MB. E pode ser
+          selecionadas no máximo 5 imagens.
+        </Typography>
+      </Box>
     </Box>
   );
 }

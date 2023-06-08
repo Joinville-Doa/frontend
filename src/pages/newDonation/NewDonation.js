@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useMutation, useQuery, gql } from "@apollo/client";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Select from "@mui/material/Select";
@@ -46,28 +46,81 @@ const GET_CATEGORIES = gql`
   }
 `;
 
+const CREATE_DONATION = gql`
+  mutation CreateDonation{
+    createDonation(input: $input) {
+      donation {
+        title
+        phoneContact
+        userId
+        categoryId
+        description
+        newProduct
+        imageOne
+        imageTwo
+        imageThree
+        imageFour
+        imageFive
+      }
+      message
+    }
+  }
+`;
+
 function NewDonation() {
-  const [tittle, setTittle] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const theme = useTheme();
-  const [categorieName, setcategorieName] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [formError, setFormError] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
   const [newProduct, setNewProduct] = useState(true);
-  const [phone, setPhone] = useState("");
+  const [phoneContact, setPhoneContact] = useState("");
   const [usePhoneProfile, setUsePhoneProfile] = useState(false);
 
   const handleImageUpload = (images) => {
     setSelectedImages(images);
   };
 
-  const handleSubmit = (event) => {
+  const [createDonation] = useMutation(CREATE_DONATION);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(tittle, description);
+
+    if (!title || !description || !categoryId || !phoneContact) {
+      setFormError("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    setFormError("");
+
+    const input = {
+      title,
+      description,
+      categoryId,
+      phoneContact,
+      newProduct,
+      userId: 40,
+      imageOne: selectedImages[0],
+      imageTwo: selectedImages[1],
+      imageThree: selectedImages[2],
+      imageFour: selectedImages[3],
+      imageFive: selectedImages[4],
+    };
+
+    try {
+      const { data } = await createDonation({
+        variables: { input },
+      });
+
+      console.log("data.createDonation", data.createDonation);
+    } catch (error) {
+      console.log("Error creating donation", error);
+    }
   };
 
   const handleChange = (event) => {
-    setcategorieName(event.target.value);
+    setCategoryId(event.target.value);
   };
 
   const handleUsePhoneProfile = (event) => {
@@ -81,10 +134,10 @@ function NewDonation() {
 
   const { categories } = data;
 
-  const getStyles = (name, categorieName, theme) => {
+  const getStyles = (name, categoryName, theme) => {
     return {
       fontWeight:
-        categorieName === name
+        categoryName === name
           ? theme.typography.fontWeightMedium
           : theme.typography.fontWeightRegular,
     };
@@ -130,7 +183,8 @@ function NewDonation() {
                 type="text"
                 label="Título"
                 variant="outlined"
-                value={tittle}
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
                 margin="normal"
                 fullWidth
                 required
@@ -153,14 +207,14 @@ function NewDonation() {
                   <InputLabel
                     id="demo-multiple-name-label"
                     sx={{ fontFamily: "Inter, sans-serif" }}
+                    required
                   >
                     Categoria
                   </InputLabel>
                   <Select
                     labelId="demo-multiple-name-label"
                     id="demo-multiple-name"
-                    single
-                    value={categorieName}
+                    value={categoryId}
                     onChange={handleChange}
                     input={<OutlinedInput label="Name" />}
                     MenuProps={MenuProps}
@@ -168,16 +222,19 @@ function NewDonation() {
                   >
                     {categories.map((category) => (
                       <MenuItem
-                        key={category.id}
-                        value={category.name}
-                        style={getStyles(category.name, categorieName, theme)}
-                      >
-                        {category.name}
-                      </MenuItem>
+                      key={category.id}
+                      value={category.id}
+                      style={getStyles(category.id, categoryId, theme)}
+                    >
+                      {category.name}
+                    </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl component="fieldset" sx={{ width: "100%", maxWidth: "48%" }}>
+                <FormControl
+                  component="fieldset"
+                  sx={{ width: "100%", maxWidth: "48%" }}
+                >
                   <Typography
                     variant="body2"
                     color="textSecondary"
@@ -226,9 +283,8 @@ function NewDonation() {
                       type="text"
                       label="Contato"
                       variant="outlined"
-                      value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
-                      fullWidth
+                      value={phoneContact}
+                      onChange={(event) => setPhoneContact(event.target.value)}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -236,6 +292,8 @@ function NewDonation() {
                           </InputAdornment>
                         ),
                       }}
+                      fullWidth
+                      required
                     />
                   </Box>
                   <Box sx={{ width: "100%" }}>
@@ -265,7 +323,6 @@ function NewDonation() {
       <Divider
         sx={{
           width: "100%",
-          height: "1px",
           backgroundColor: "#DDDDDD",
           marginBottom: "20px",
           marginTop: "100px",
@@ -323,6 +380,7 @@ function NewDonation() {
             variant="contained"
             color="primary"
             type="submit"
+            onClick={handleSubmit}
             sx={{
               width: "25%",
               margin: "0 60px",
