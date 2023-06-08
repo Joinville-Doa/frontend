@@ -47,13 +47,12 @@ const GET_CATEGORIES = gql`
 `;
 
 const CREATE_DONATION = gql`
-  mutation CreateDonation{
+  mutation CreateDonation($input: CreateDonationInput!) {
     createDonation(input: $input) {
       donation {
         title
         phoneContact
         userId
-        categoryId
         description
         newProduct
         imageOne
@@ -82,6 +81,20 @@ function NewDonation() {
     setSelectedImages(images);
   };
 
+  const handlePhoneChange = (event) => {
+    const newValue = formatPhone(event.target.value);
+    setPhoneContact(newValue);
+  };
+
+  const formatPhone = (value) => {
+    let newValue = value.replace(/\D/g, "");
+
+    newValue = newValue.replace(/(\d{2})(\d)/, "($1) $2").slice(0, 14);
+    newValue = newValue.replace(/(\d{5})(\d)/, "$1-$2");
+
+    return newValue;
+  };
+
   const [createDonation] = useMutation(CREATE_DONATION);
 
   const handleSubmit = async (event) => {
@@ -100,7 +113,7 @@ function NewDonation() {
       categoryId,
       phoneContact,
       newProduct,
-      userId: 40,
+      userId: "3",
       imageOne: selectedImages[0],
       imageTwo: selectedImages[1],
       imageThree: selectedImages[2],
@@ -152,18 +165,27 @@ function NewDonation() {
           flexDirection: "column",
           alignItems: "center",
           marginTop: 4,
+          padding: "0 20px",
         }}
       >
         <Typography
           variant="h5"
           component="h2"
           gutterBottom
-          sx={{ fontFamily: "Inter, sans-serif" }}
+          sx={{
+            fontFamily: "Inter, sans-serif",
+            textAlign: "center",
+            maxWidth: "100%",
+            marginBottom: "10px",
+          }}
         >
           O QUE VOCÊ ESTÁ ANUNCIANDO?
         </Typography>
         <Divider
-          sx={{ width: "25%", borderWidth: "1px", borderBlockColor: "#000000" }}
+          sx={{
+            width: "100%",
+            marginBottom: "20px",
+          }}
         />
       </Box>
       <Box
@@ -176,7 +198,7 @@ function NewDonation() {
           marginRight: "150px",
         }}
       >
-        <Grid container spacing={2}>
+        <Grid>
           <Grid item xs={12} md={6}>
             <form onSubmit={handleSubmit}>
               <TextField
@@ -222,12 +244,12 @@ function NewDonation() {
                   >
                     {categories.map((category) => (
                       <MenuItem
-                      key={category.id}
-                      value={category.id}
-                      style={getStyles(category.id, categoryId, theme)}
-                    >
-                      {category.name}
-                    </MenuItem>
+                        key={category.id}
+                        value={category.id}
+                        style={getStyles(category.id, categoryId, theme)}
+                      >
+                        {category.name}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -284,7 +306,7 @@ function NewDonation() {
                       label="Contato"
                       variant="outlined"
                       value={phoneContact}
-                      onChange={(event) => setPhoneContact(event.target.value)}
+                      onChange={handlePhoneChange}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -310,24 +332,75 @@ function NewDonation() {
                   </Box>
                 </Box>
               </Box>
+              <Grid marginTop={4}>
+                <ImageUpload
+                  selectedImages={selectedImages}
+                  onImageUpload={handleImageUpload}
+                />
+              </Grid>
+              <Divider
+                sx={{
+                  width: "100%",
+                  marginTop: "50px",
+                }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                  flexDirection: "row",
+                  backgroundColor: "#FFF7E0",
+                  width: "100%",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginTop: "20px",
+                  padding: "10px",
+                }}
+              >
+                <ReportProblemOutlinedIcon
+                  sx={{ marginRight: "10px", marginLeft: "10px" }}
+                  color="warning"
+                />
+                <Typography
+                  gutterBottom
+                  sx={{
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "14px",
+                    textAlign: "center",
+                  }}
+                >
+                  Não pedimos códigos por ligação, chat ou WhatsApp. Desconfie
+                  se alguém entrar em contato
+                  em nome da <strong>Joinville Doa</strong>.
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 2,
+                  marginBottom: 10,
+                }}
+              >
+                <Button variant="contained" color="primary" type="submit" style={{minWidth: "150px"}}>
+                  Salvar
+                </Button>
+                <Link to={"/"}>
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    sx={{ marginLeft: 10 }}
+                    style={{minWidth: "150px"}}
+                  >
+                    Cancelar
+                  </Button>
+                </Link>
+              </Box>
             </form>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <ImageUpload
-              selectedImages={selectedImages}
-              onImageUpload={handleImageUpload}
-            />
           </Grid>
         </Grid>
       </Box>
-      <Divider
-        sx={{
-          width: "100%",
-          backgroundColor: "#DDDDDD",
-          marginBottom: "20px",
-          marginTop: "100px",
-        }}
-      />
       <Box
         sx={{
           display: "flex",
@@ -336,80 +409,7 @@ function NewDonation() {
           flexDirection: "column",
           marginTop: "20px",
         }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "20px",
-            flexDirection: "row",
-            backgroundColor: "#FFF7E0",
-            width: "100%",
-            maxWidth: "50%",
-            marginLeft: "auto",
-            marginRight: "auto",
-            padding: "10px",
-          }}
-        >
-          <ReportProblemOutlinedIcon
-            sx={{ marginRight: "10px", marginLeft: "10px" }}
-            color="warning"
-          />
-          <Typography
-            gutterBottom
-            sx={{ fontFamily: "Inter, sans-serif", fontSize: "14px" }}
-          >
-            Não pedimos códigos por ligação, chat ou WhatsApp. Desconfie se
-            alguém entrar em contato ou enviar comprovante de pagamento em nome
-            da <strong>Joinville Doa</strong>.
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "200px",
-            flexDirection: "row",
-            width: "100%",
-            maxWidth: "30%",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            onClick={handleSubmit}
-            sx={{
-              width: "25%",
-              margin: "0 60px",
-            }}
-          >
-            Salvar
-          </Button>
-          {formError && (
-            <Typography
-              variant="body2"
-              color="error"
-              sx={{ textAlign: "center" }}
-            >
-              {formError}
-            </Typography>
-          )}
-          <Link to="/" passHref>
-            <Button
-              variant="contained"
-              color="warning"
-              sx={{
-                width: "100%",
-              }}
-            >
-              Cancelar
-            </Button>
-          </Link>
-        </Box>
-      </Box>
+      ></Box>
       <Footer />
     </>
   );
