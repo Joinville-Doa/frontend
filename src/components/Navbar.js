@@ -14,7 +14,6 @@ import { styled } from "@mui/material/styles";
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
   boxShadow: "none",
-  opacity: 0.8,
 }));
 
 export default function PrimarySearchAppBar() {

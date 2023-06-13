@@ -11,7 +11,8 @@ import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined
 import ImageUpload from "../../components/ImageUpload";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useTheme } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { useAuth } from "../../components/AuthProvider";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -53,6 +54,8 @@ const CREATE_DONATION = gql`
         title
         phoneContact
         userId
+        categoryId
+        hasWhatsapp
         description
         newProduct
         imageOne
@@ -67,15 +70,18 @@ const CREATE_DONATION = gql`
 `;
 
 function NewDonation() {
+  const theme = useTheme();
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const theme = useTheme();
   const [categoryId, setCategoryId] = useState("");
   const [formError, setFormError] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
   const [newProduct, setNewProduct] = useState(true);
   const [phoneContact, setPhoneContact] = useState("");
+  const [hasWhatsapp, setHasWhatsapp] = useState(false);
   const [usePhoneProfile, setUsePhoneProfile] = useState(false);
+  const { user } = useAuth();
 
   const handleImageUpload = (images) => {
     setSelectedImages(images);
@@ -113,7 +119,8 @@ function NewDonation() {
       categoryId,
       phoneContact,
       newProduct,
-      userId: "3",
+      hasWhatsapp,
+      userId: user.id,
       imageOne: selectedImages[0],
       imageTwo: selectedImages[1],
       imageThree: selectedImages[2],
@@ -125,11 +132,12 @@ function NewDonation() {
       const { data } = await createDonation({
         variables: { input },
       });
-
-      console.log("data.createDonation", data.createDonation);
     } catch (error) {
       console.log("Error creating donation", error);
     }
+    setTimeout(() => {
+      navigate("/minhas-doacoes");
+    }, 1000);
   };
 
   const handleChange = (event) => {
@@ -137,7 +145,19 @@ function NewDonation() {
   };
 
   const handleUsePhoneProfile = (event) => {
-    setUsePhoneProfile(event.target.checked);
+    const checked = event.target.checked;
+    setUsePhoneProfile(checked);
+    if (checked) {
+      const formattedPhone = formatPhone(user.phone || "");
+      setPhoneContact(formattedPhone);
+    } else {
+      setPhoneContact("");
+    }
+  };
+
+  const handleHasWhatsapp = (event) => {
+    const checked = event.target.checked;
+    setHasWhatsapp(checked);
   };
 
   const { loading, error, data } = useQuery(GET_CATEGORIES);
@@ -323,7 +343,17 @@ function NewDonation() {
                           style={{ marginLeft: "10px" }}
                         />
                       }
-                      label="Usar Telefone do meu perfil"
+                      label="Usar Telefone do meu cadastro"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={hasWhatsapp}
+                          onChange={handleHasWhatsapp}
+                          style={{ marginLeft: "10px" }}
+                        />
+                      }
+                      label="Possui WhatsApp"
                     />
                   </Box>
                 </Box>
