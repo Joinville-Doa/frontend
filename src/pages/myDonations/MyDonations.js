@@ -3,17 +3,13 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import {
-  CardActionArea,
-  Grid,
-  IconButton,
-  Divider,
-} from "@mui/material";
+import { CardActionArea, Grid, IconButton, Divider } from "@mui/material";
 import Navbar from "../../components/Navbar";
 import { useQuery, gql } from "@apollo/client";
 import Footer from "../../components/Footer";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useAuth } from "../../components/AuthProvider";
 
 const GET_DATA = gql`
@@ -35,6 +31,8 @@ const GET_DATA = gql`
 `;
 
 export default function MyDonations() {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const { user } = useAuth();
   let variables = {};
 
@@ -50,6 +48,10 @@ export default function MyDonations() {
   if (error) return <p>Erro :(</p>;
 
   const donations = data?.donationsByUser || [];
+
+  const handleEditDonation = (donationId) => {
+    navigate(`/editar-doacao/${donationId}`);
+  };
 
   return (
     <>
@@ -112,13 +114,11 @@ export default function MyDonations() {
                   padding: "0 16px",
                 }}
               >
-                <IconButton>
-                  <EditIcon
-                    onClick={() => {
-                      console.log("Edit");
-                    }}
-                    style={{ color: "#000000" }}
-                  />
+                <IconButton
+                  component={Link}
+                  to={`/editar-doacao/${donation.id}`}
+                >
+                  <EditIcon style={{ color: "#000000" }} />
                 </IconButton>
                 <IconButton>
                   <DeleteForeverIcon

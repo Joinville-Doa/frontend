@@ -9,6 +9,7 @@ import Terms from "./pages/terms/Terms";
 import MyPerfil from "./pages/myPerfil/MyPerfil";
 import MyDonations from "./pages/myDonations/MyDonations";
 import NewDonation from "./pages/newDonation/NewDonation";
+import EditDonation from "./pages/editDonation/EditDonation";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/meu-perfil" element={<MyPerfil />} />
           <Route path="/minhas-doacoes" element={<MyDonations />} />
           <Route path="/nova-doacao" element={<NewDonation />} />
+          <Route path="/editar-doacao/:id" element={<EditDonation />} />
         </Routes>
       </Router>
     </AuthProvider>

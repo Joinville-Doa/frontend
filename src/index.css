@@ -38,3 +38,14 @@ code {
   text-shadow: #1e1d1d 0px 0px 1px;
 }
 
+.search-input-notched-outline {
+  border: none !important;
+}
+
+.search-input-focused .MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+
+.search-input-hover:hover .MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
