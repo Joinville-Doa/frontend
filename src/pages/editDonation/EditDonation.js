@@ -71,13 +71,15 @@ const GET_DONATION = gql`
 `;
 
 const UPDATE_DONATION = gql`
-  mutation UpdateDonation($id: ID!, $input: UpdateDonationInput!) {
-    updateDonation(id: $id, input: $input) {
+  mutation UpdateDonation($input: UpdateDonationInput!) {
+    updateDonation(input: $input) {
       donation {
         title
         phoneContact
         userId
         description
+        categoryId
+        hasWhatsapp
         newProduct
         imageOne
         imageTwo
@@ -136,12 +138,14 @@ function EditDonation() {
     setFormError("");
 
     const input = {
+      id,
       title,
       description,
       categoryId,
       phoneContact,
       newProduct,
       hasWhatsapp,
+      userId: user.id,
       imageOne: selectedImages[0],
       imageTwo: selectedImages[1],
       imageThree: selectedImages[2],
@@ -151,13 +155,14 @@ function EditDonation() {
 
     try {
       const { data } = await updateDonation({
-        variables: { id, input },
+        variables: { input },
       });
     } catch (error) {
       console.log("Error updating donation", error);
     }
     setTimeout(() => {
       navigate("/minhas-doacoes");
+      window.location.reload();
     }, 1000);
   };
 
