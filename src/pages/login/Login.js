@@ -17,6 +17,7 @@ const LOGIN_MUTATION = gql`
   mutation LoginUser($email: String!, $password: String!) {
     loginUser(input: { email: $email, password: $password }) {
       user {
+        id
         name
         email
         documentNumber
@@ -37,7 +38,7 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const { login } = useAuth();
+  const { login, userAuth } = useAuth();
 
   const [loginUser] = useMutation(LOGIN_MUTATION);
 
@@ -83,6 +84,7 @@ export default function Login() {
 
       if (data.loginUser.token) {
         login(data.loginUser.token);
+        userAuth(data.loginUser.user);
         // window.location.href = "/";
       }
 

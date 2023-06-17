@@ -1,22 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { gql } from "@apollo/client";
-import client from "../apollo";
 
 const AuthContext = createContext();
-
-const GET_USER_BY_TOKEN = gql`
-  query GetUserByToken($token: String!) {
-    userByToken(token: $token) {
-      id
-      name
-      email
-      documentNumber
-      dateOfBirth
-      acceptTermsOfUse
-      phone
-    }
-  }
-`;
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState("");
@@ -26,30 +10,22 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
-      fetchUser(storedToken);
+    }
+
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  const fetchUser = async (token) => {
-    try {
-      const { data } = await client.query({
-        query: GET_USER_BY_TOKEN,
-        variables: {
-          token: token,
-        },
-      });
-
-      const user = data.userByToken;
-      setUser(user);
-    } catch (error) {
-      console.log("Error fetching user", error);
-    }
+  const userAuth = (user) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(JSON.parse(JSON.stringify(user)));
   };
 
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
-    fetchUser(newToken);
   };
 
   const logout = () => {
@@ -61,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ userAuth, login, logout, isAuthenticated, token, user }}>
       {children}
     </AuthContext.Provider>
   );

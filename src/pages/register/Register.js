@@ -239,24 +239,43 @@ export default function Register() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
-          marginTop: 4,
+          flexDirection: "column",
+          mt: 4,
+          maxWidth: "60%",
+          margin: "100px auto",
+          backgroundColor: "rgba(245, 245, 245, 0.8)",
+          border: "1px solid #E0E0E0",
+          borderRadius: "10px",
+          p: 4,
+          "@media (max-width: 600px)": {
+            maxWidth: "90%",
+          },
         }}
       >
-        <Typography
-          variant="h5"
-          component="h2"
-          gutterBottom
-          sx={{ fontFamily: "Inter, sans-serif" }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: 4,
+          }}
         >
-          Cadastro de Usuário
-        </Typography>
+          <Typography
+            variant="h5"
+            component="h2"
+            gutterBottom
+            sx={{ fontFamily: "Inter, sans-serif" }}
+          >
+            Cadastro de Usuário
+          </Typography>
+        </Box>
         <Divider
-          sx={{ width: "25%", borderWidth: "1px", borderBlockColor: "#000000" }}
+          sx={{
+            width: "100%",
+          }}
         />
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <form
           onSubmit={handleSubmit}
           style={{ width: "100%", maxWidth: "600px" }}
