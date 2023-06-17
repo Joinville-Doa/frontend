@@ -151,9 +151,9 @@ export default function PrimarySearchAppBar() {
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
-              justifyContent: "center",
+              justifyContent: "space-between",
+              width: isAuthenticated ? "50%" : "30%",
             }}
-            style={{ width: "80%" }}
           >
             {isAuthenticated ? (
               [

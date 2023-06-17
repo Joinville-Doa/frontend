@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -39,6 +39,7 @@ export default function Login() {
   const [formError, setFormError] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { login, userAuth } = useAuth();
+  const navigate = useNavigate();
 
   const [loginUser] = useMutation(LOGIN_MUTATION);
 
@@ -85,7 +86,7 @@ export default function Login() {
       if (data.loginUser.token) {
         login(data.loginUser.token);
         userAuth(data.loginUser.user);
-        // window.location.href = "/";
+        navigate("/");
       }
 
       if (data.loginUser.message) {
