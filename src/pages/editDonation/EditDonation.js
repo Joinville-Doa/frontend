@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useMutation, useQuery, gql } from "@apollo/client";
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery, gql, useParam } from "@apollo/client";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Select from "@mui/material/Select";
@@ -12,7 +12,8 @@ import ImageUpload from "../../components/ImageUpload";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../components/AuthProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { Checkbox } from "@mui/material";
 import {
   Box,
   Typography,
@@ -25,7 +26,6 @@ import {
   Grid,
   InputAdornment,
 } from "@mui/material";
-import { Checkbox } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -47,16 +47,39 @@ const GET_CATEGORIES = gql`
   }
 `;
 
-const CREATE_DONATION = gql`
-  mutation CreateDonation($input: CreateDonationInput!) {
-    createDonation(input: $input) {
+const GET_DONATION = gql`
+  query GetDonation($id: ID!) {
+    donation(id: $id) {
+      id
+      title
+      description
+      phoneContact
+      categoryId
+      hasWhatsapp
+      newProduct
+      imageOne
+      imageTwo
+      imageThree
+      imageFour
+      imageFive
+    }
+    categories {
+      id
+      name
+    }
+  }
+`;
+
+const UPDATE_DONATION = gql`
+  mutation UpdateDonation($input: UpdateDonationInput!) {
+    updateDonation(input: $input) {
       donation {
         title
         phoneContact
         userId
+        description
         categoryId
         hasWhatsapp
-        description
         newProduct
         imageOne
         imageTwo
@@ -69,7 +92,7 @@ const CREATE_DONATION = gql`
   }
 `;
 
-function NewDonation() {
+function EditDonation() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
@@ -82,6 +105,7 @@ function NewDonation() {
   const [hasWhatsapp, setHasWhatsapp] = useState(false);
   const [usePhoneProfile, setUsePhoneProfile] = useState(false);
   const { user } = useAuth();
+  const { id } = useParams();
 
   const handleImageUpload = (images) => {
     setSelectedImages(images);
@@ -101,7 +125,7 @@ function NewDonation() {
     return newValue;
   };
 
-  const [createDonation] = useMutation(CREATE_DONATION);
+  const [updateDonation] = useMutation(UPDATE_DONATION);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -114,6 +138,7 @@ function NewDonation() {
     setFormError("");
 
     const input = {
+      id,
       title,
       description,
       categoryId,
@@ -129,14 +154,15 @@ function NewDonation() {
     };
 
     try {
-      const { data } = await createDonation({
+      const { data } = await updateDonation({
         variables: { input },
       });
     } catch (error) {
-      console.log("Error creating donation", error);
+      console.log("Error updating donation", error);
     }
     setTimeout(() => {
       navigate("/minhas-doacoes");
+      window.location.reload();
     }, 1000);
   };
 
@@ -160,7 +186,28 @@ function NewDonation() {
     setHasWhatsapp(checked);
   };
 
-  const { loading, error, data } = useQuery(GET_CATEGORIES);
+  const { loading, error, data } = useQuery(GET_DONATION, {
+    variables: { id },
+  });
+
+  useEffect(() => {
+    if (data && data.donation) {
+      const donation = data.donation;
+      setTitle(donation.title);
+      setDescription(donation.description);
+      setCategoryId(donation.categoryId);
+      setPhoneContact(donation.phoneContact);
+      setNewProduct(donation.newProduct);
+      setHasWhatsapp(donation.hasWhatsapp);
+      setSelectedImages([
+        donation.imageOne,
+        donation.imageTwo,
+        donation.imageThree,
+        donation.imageFour,
+        donation.imageFive,
+      ]);
+    }
+  }, [data]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -214,7 +261,7 @@ function NewDonation() {
                   marginTop: "20px",
                 }}
               >
-                Anunciar doação
+                Editar doação
               </Typography>
               <Divider sx={{ mt: 2, mb: 2 }} />
               <TextField
@@ -437,4 +484,4 @@ function NewDonation() {
   );
 }
 
-export default NewDonation;
+export default EditDonation;

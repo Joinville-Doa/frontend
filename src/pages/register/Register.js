@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -50,6 +50,7 @@ export default function Register() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const [registerUser] = useMutation(REGISTER_MUTATION);
 
@@ -189,16 +190,8 @@ export default function Register() {
           dateOfBirth,
           acceptTermsOfUse,
         } = data.createUser.user;
-        console.log("User created:", {
-          id,
-          name,
-          email,
-          documentNumber,
-          phone,
-          dateOfBirth,
-          acceptTermsOfUse,
-        });
         setSnackbarMessage("Usuário criado com sucesso!");
+        navigate("/login");
         setSnackbarOpen(true);
         return;
       }
@@ -239,24 +232,43 @@ export default function Register() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
-          marginTop: 4,
+          flexDirection: "column",
+          mt: 4,
+          maxWidth: "60%",
+          margin: "100px auto",
+          backgroundColor: "rgba(245, 245, 245, 0.8)",
+          border: "1px solid #E0E0E0",
+          borderRadius: "10px",
+          p: 4,
+          "@media (max-width: 600px)": {
+            maxWidth: "90%",
+          },
         }}
       >
-        <Typography
-          variant="h5"
-          component="h2"
-          gutterBottom
-          sx={{ fontFamily: "Inter, sans-serif" }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: 4,
+          }}
         >
-          Cadastro de Usuário
-        </Typography>
+          <Typography
+            variant="h5"
+            component="h2"
+            gutterBottom
+            sx={{ fontFamily: "Inter, sans-serif" }}
+          >
+            Cadastro de Usuário
+          </Typography>
+        </Box>
         <Divider
-          sx={{ width: "25%", borderWidth: "1px", borderBlockColor: "#000000" }}
+          sx={{
+            width: "100%",
+          }}
         />
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <form
           onSubmit={handleSubmit}
           style={{ width: "100%", maxWidth: "600px" }}
@@ -381,7 +393,12 @@ export default function Register() {
               }}
             >
               Estou de acordo com a{" "}
-              <Link to="/politicas-de-uso" style={{ textDecoration: "none" }}>
+              <Link
+                to="/politicas-de-uso"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
                 <strong style={{ color: "#E54203" }}>
                   política de privacidade
                 </strong>{" "}
@@ -412,7 +429,7 @@ export default function Register() {
               {formError}
             </Typography>
           )}
-          <Link to="/" passHref>
+          <Link to="/">
             <Button
               variant="contained"
               color="warning"
