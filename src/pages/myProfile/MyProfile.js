@@ -71,17 +71,26 @@ export default function MyProfile() {
   useEffect(() => {
     setIsSaveEnabled(
       name !== "" &&
-      cpf !== "" &&
-      dateOfBirth !== "" &&
-      phone !== "" &&
-      email !== "" &&
-      acceptTermsOfUse &&
-      password !== "" &&
-      confirmPassword !== "" &&
-      password === confirmPassword &&
-      password !== user.password
+        cpf !== "" &&
+        dateOfBirth !== "" &&
+        phone !== "" &&
+        email !== "" &&
+        acceptTermsOfUse &&
+        password !== "" &&
+        confirmPassword !== "" &&
+        password === confirmPassword &&
+        password !== user.password
     );
-  }, [name, cpf, dateOfBirth, phone, email, acceptTermsOfUse, password, confirmPassword]);
+  }, [
+    name,
+    cpf,
+    dateOfBirth,
+    phone,
+    email,
+    acceptTermsOfUse,
+    password,
+    confirmPassword,
+  ]);
 
   const handleCPFChange = (event) => {
     const newValue = formatCPF(event.target.value);
@@ -216,7 +225,9 @@ export default function MyProfile() {
   };
 
   const handleShowConfirmPassword = () => {
-    setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword);
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
   };
 
   return (
@@ -382,7 +393,11 @@ export default function MyProfile() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={handleShowConfirmPassword}>
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -410,7 +425,12 @@ export default function MyProfile() {
               }}
             >
               Estou de acordo com a{" "}
-              <Link to="/politicas-de-uso" style={{ textDecoration: "none" }}>
+              <Link
+                to="/politicas-de-uso"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
                 <strong style={{ color: "#E54203" }}>
                   política de privacidade
                 </strong>{" "}

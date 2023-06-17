@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -50,6 +50,7 @@ export default function Register() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const [registerUser] = useMutation(REGISTER_MUTATION);
 
@@ -189,16 +190,8 @@ export default function Register() {
           dateOfBirth,
           acceptTermsOfUse,
         } = data.createUser.user;
-        console.log("User created:", {
-          id,
-          name,
-          email,
-          documentNumber,
-          phone,
-          dateOfBirth,
-          acceptTermsOfUse,
-        });
         setSnackbarMessage("Usuário criado com sucesso!");
+        navigate("/login");
         setSnackbarOpen(true);
         return;
       }
@@ -400,7 +393,12 @@ export default function Register() {
               }}
             >
               Estou de acordo com a{" "}
-              <Link to="/politicas-de-uso" style={{ textDecoration: "none" }}>
+              <Link
+                to="/politicas-de-uso"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
                 <strong style={{ color: "#E54203" }}>
                   política de privacidade
                 </strong>{" "}

@@ -198,7 +198,11 @@ export default function Login() {
           </Button>
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}>
-          <Link to="/politicas-de-uso">
+          <Link
+            to="/politicas-de-uso"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button variant="text" color="primary">
               Política de privacidade
             </Button>

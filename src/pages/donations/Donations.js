@@ -3,6 +3,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import Navbar from "../../components/Navbar";
+import { useQuery, gql } from "@apollo/client";
+import Search from "@mui/icons-material/Search";
+import Footer from "../../components/Footer";
+import { useNavigate } from "react-router-dom";
 import {
   CardActionArea,
   Grid,
@@ -10,25 +15,13 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import Navbar from "../../components/Navbar";
-import { useQuery, gql } from "@apollo/client";
-import Search from "@mui/icons-material/Search";
-import Footer from "../../components/Footer";
 
 const GET_DATA = gql`
   query Donations($limit: Int, $offset: Int) {
     donations(limit: $limit, offset: $offset) {
       id
       title
-      description
-      createdAt
-      updatedAt
-      userId
       imageOne
-      imageTwo
-      imageThree
-      imageFour
-      imageFive
     }
   }
 `;
@@ -55,6 +48,7 @@ function useIntersectionObserver(callback, options) {
 export default function Donations() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [isFetchingMore, setIsFetchingMore] = React.useState(false);
+  const navigate = useNavigate();
 
   const { loading, error, data, fetchMore } = useQuery(GET_DATA, {
     variables: { limit: PAGE_LIMIT, offset: 0 },
@@ -91,6 +85,10 @@ export default function Donations() {
       });
     }
   }, [data, fetchMore, isFetchingMore]);
+
+  const handleViewDonation = (id) => {
+    navigate(`/doacao/${id}`);
+  };
 
   const handleObserver = React.useCallback(
     (entries) => {
@@ -157,6 +155,7 @@ export default function Donations() {
                   height="220"
                   image={donation.imageOne}
                   alt="Imagem da doação"
+                  onClick={() => handleViewDonation(donation.id)}
                 />
                 <CardContent>
                   <Typography

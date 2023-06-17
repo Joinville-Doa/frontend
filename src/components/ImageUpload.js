@@ -29,7 +29,7 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
       formData.append("samples", `${uuidv4()}`);
 
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
+        `https://api.cloudinary.com/v1_1/dpkix0ze1/image/upload`,
         {
           method: "POST",
           body: formData,
@@ -51,12 +51,12 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
   };
 
   return (
-    <Box sx={{ width: "100%", marginLeft: 4 }}>
+    <Box sx={{ width: "100%" }}>
       <Typography
         variant="h6"
         component="h2"
         gutterBottom
-        sx={{ fontFamily: "Inter, sans-serif", marginLeft: "15px" }}
+        sx={{ fontFamily: "Inter, sans-serif"}}
       >
         Anexar Imagens
       </Typography>

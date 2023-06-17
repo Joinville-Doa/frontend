@@ -13,6 +13,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../components/AuthProvider";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { Checkbox } from "@mui/material";
 import {
   Box,
   Typography,
@@ -25,7 +26,6 @@ import {
   Grid,
   InputAdornment,
 } from "@mui/material";
-import { Checkbox } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
