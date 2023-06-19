@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Snackbar,
-  Divider,
-} from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { useMutation, gql } from "@apollo/client";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useAuth } from "../../components/AuthProvider";
+import { TextField, Button, Typography, Box, Divider } from "@mui/material";
 
 const LOGIN_MUTATION = gql`
   mutation LoginUser($email: String!, $password: String!) {
@@ -31,13 +27,17 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [formSuccess, setFormSuccess] = useState("");
   const { login, userAuth } = useAuth();
   const navigate = useNavigate();
 
@@ -47,12 +47,14 @@ export default function Login() {
     setEmail(event.target.value);
     setEmailError("");
     setFormError("");
+    setFormSuccess("");
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
     setPasswordError("");
     setFormError("");
+    setFormSuccess("");
   };
 
   const handleSubmit = async (event) => {
@@ -86,24 +88,26 @@ export default function Login() {
       if (data.loginUser.token) {
         login(data.loginUser.token);
         userAuth(data.loginUser.user);
-        navigate("/");
+        setFormSuccess(data.loginUser.message);
+        setTimeout(() => {
+          navigate("/");
+          window.location.reload();
+        }, 2000);
       }
 
-      if (data.loginUser.message) {
+      if (data.loginUser.message && data.loginUser.token === null) {
         setFormError(data.loginUser.message);
-        setSnackbarOpen(true);
-        return;
       }
     } catch (error) {
       setFormError(
         "Ocorreu um erro ao fazer login. Por favor, tente novamente."
       );
-      setSnackbarOpen(true);
     }
   };
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+    setFormError("");
+    setFormSuccess("");
   };
 
   return (
@@ -167,14 +171,23 @@ export default function Login() {
           >
             Logar
           </Button>
-          {formError && (
-            <Snackbar
-              open={snackbarOpen}
-              autoHideDuration={6000}
-              onClose={handleSnackbarClose}
-              message={formError}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            />
+          {(formError || formSuccess) && (
+            <Stack sx={{ width: "100%" }} spacing={2}>
+              <Snackbar
+                open={Boolean(formError || formSuccess)}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                <Alert
+                  onClose={handleSnackbarClose}
+                  severity={formError ? "error" : "success"}
+                  sx={{ width: "100%" }}
+                >
+                  {formError || formSuccess}
+                </Alert>
+              </Snackbar>
+            </Stack>
           )}
         </form>
         <Box sx={{ mt: 4, display: "flex", flexDirection: "column" }}>
