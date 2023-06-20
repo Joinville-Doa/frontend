@@ -13,7 +13,7 @@ import { styled } from "@mui/material/styles";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
-  boxShadow: "none",
+  boxShadow: "0px 2px 4px rgba(77, 77, 252, 0.2)",
 }));
 
 export default function PrimarySearchAppBar() {

@@ -116,6 +116,10 @@ function EditDonation() {
   const [formSuccess, setFormSuccess] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  if (!user) {
+    navigate("*");
+  }
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -142,6 +146,18 @@ function EditDonation() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (selectedImages.every((image) => image === null)) {
+      setFormError("Necessário incluir pelo menos uma imagem.");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (!selectedImages[0]) {
+      const updatedImages = [...selectedImages];
+      updatedImages[0] = selectedImages.find((image) => image !== null);
+      setSelectedImages(updatedImages);
+    }
 
     if (!title || !description || !categoryId || !phoneContact) {
       setFormError("Preencha todos os campos obrigatórios.");
@@ -174,6 +190,7 @@ function EditDonation() {
       setSnackbarOpen(true);
       setTimeout(() => {
         navigate("/minhas-doacoes");
+        window.location.reload();
       }, 2000);
     } catch (error) {
       setFormError(error.message);
