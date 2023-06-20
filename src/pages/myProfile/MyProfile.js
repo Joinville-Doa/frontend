@@ -5,6 +5,8 @@ import { useAuth } from "../../components/AuthProvider";
 import { Link } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useMutation, gql } from "@apollo/client";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import {
   TextField,
   Button,
@@ -33,6 +35,10 @@ const UPDATE_USER_MUTATION = gql`
   }
 `;
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function MyProfile() {
   const { user } = useAuth();
 
@@ -51,9 +57,10 @@ export default function MyProfile() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
   const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION);
 
@@ -91,6 +98,10 @@ export default function MyProfile() {
     password,
     confirmPassword,
   ]);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleCPFChange = (event) => {
     const newValue = formatCPF(event.target.value);
@@ -190,22 +201,14 @@ export default function MyProfile() {
           acceptTermsOfUse,
         } = data.updateUser.user;
 
-        setSnackbarMessage("Usuário atualizado com sucesso!");
+        setFormSuccess("Usuário atualizado com sucesso!");
         setSnackbarOpen(true);
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
-      }
-
-      if (data.updateUser.message) {
-        setSnackbarOpen(data.updateUser.message);
-        setSnackbarOpen(true);
-        return;
+        }, 2000);
       }
     } catch (error) {
-      setSnackbarOpen(
-        "Ocorreu um erro ao atualizar o usuário. Por favor, tente novamente mais tarde."
-      );
+      setFormError(error.message);
       setSnackbarOpen(true);
     }
   };
@@ -488,7 +491,19 @@ export default function MyProfile() {
           )}
         </form>
       </Box>
-
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formError ? "error" : "success"}
+        >
+          {formError || formSuccess}
+        </Alert>
+      </Snackbar>
       <Footer />
     </>
   );

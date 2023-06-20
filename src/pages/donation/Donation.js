@@ -195,7 +195,7 @@ export default function Donation() {
             ))}
           </ImageList>
         </Box>
-        <Box sx={{ width: "60%", pr: 2, marginLeft: "25px" }}>
+        <Box sx={{ width: "60%", pr: 2, marginLeft: "50px" }}>
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             {donation.title}
           </Typography>
@@ -204,10 +204,10 @@ export default function Donation() {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              alignItems: "flex-start",
+              alignItems: "center",
               flexDirection: "column",
               mt: 2,
-              maxWidth: "80%",
+              maxWidth: "100%",
               textAlign: "center",
             }}
           >
@@ -244,7 +244,7 @@ export default function Donation() {
                     const message = encodeURIComponent(
                       "Olá, eu vi o anúncio da sua doação no site Joinville Doa. Gostaria de saber se ainda está disponível." + "\n\n" + "Título: " + donation.title + "\n" + "Link: " + window.location.href
                     );
-                    const url = `https://api.whatsapp.com/send?phone=${donation.phoneContact}&text=${message}`;
+                    const url = `https://api.whatsapp.com/send?phone=55${donation.phoneContact}&text=${message}`;
                     window.open(url, "_blank");
                   }}
                 >

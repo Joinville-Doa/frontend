@@ -3,6 +3,15 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import Navbar from "../../components/Navbar";
+import { useQuery, gql, useMutation } from "@apollo/client";
+import Footer from "../../components/Footer";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { useAuth } from "../../components/AuthProvider";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import {
   CardActionArea,
   Grid,
@@ -16,13 +25,6 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import Navbar from "../../components/Navbar";
-import { useQuery, gql, useMutation } from "@apollo/client";
-import Footer from "../../components/Footer";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { useAuth } from "../../components/AuthProvider";
 
 const GET_DATA = gql`
   query GetDonationsByUser($userId: ID!) {
@@ -50,17 +52,29 @@ const DELETE_DONATION = gql`
   }
 `;
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function MyDonations() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [selectedDonation, setSelectedDonation] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   let variables = {};
 
   if (user) {
     variables = { userId: user.id };
   }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const { loading, error, data } = useQuery(GET_DATA, {
     variables,
@@ -82,15 +96,18 @@ export default function MyDonations() {
         });
 
         if (data.deleteDonation.message) {
-          window.location.reload();
-          console.log(data.deleteDonation.message);
+          setFormSuccess("Doação atualiza com sucesso!");
+          setSnackbarOpen(true);
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         }
 
         setSelectedDonation(null);
         setDialogOpen(false);
       } catch (error) {
-        // Handle error
-        console.error("Failed to delete donation:", error);
+        setFormError("Houve um erro ao excluir a doação. Tente novamente.");
+        setSnackbarOpen(true);
       }
     }
   };
@@ -215,6 +232,19 @@ export default function MyDonations() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formError ? "error" : "success"}
+        >
+          {formError || formSuccess}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

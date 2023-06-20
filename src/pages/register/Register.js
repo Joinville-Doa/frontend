@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { Link, useNavigate } from "react-router-dom";
+import Stack from "@mui/material/Stack";
+import MuiAlert from "@mui/material/Alert";
+import { useMutation, gql } from "@apollo/client";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   TextField,
   Button,
@@ -13,8 +17,6 @@ import {
   InputAdornment,
   Checkbox,
 } from "@mui/material";
-import { useMutation, gql } from "@apollo/client";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const REGISTER_MUTATION = gql`
   mutation RegisterUser($input: CreateUserInput!) {
@@ -33,6 +35,10 @@ const REGISTER_MUTATION = gql`
   }
 `;
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,8 +52,7 @@ export default function Register() {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [formError, setFormError] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
@@ -99,20 +104,14 @@ export default function Register() {
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
-    setEmailError("");
-    setFormError("");
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
-    setPasswordError("");
-    setFormError("");
   };
 
   const handleConfirmPasswordChange = (event) => {
     setConfirmPassword(event.target.value);
-    setConfirmPasswordError("");
-    setFormError("");
   };
 
   const handleShowPassword = () => {
@@ -190,27 +189,25 @@ export default function Register() {
           dateOfBirth,
           acceptTermsOfUse,
         } = data.createUser.user;
-        setSnackbarMessage("Usuário criado com sucesso!");
-        navigate("/login");
-        setSnackbarOpen(true);
+        setFormSuccess(data.createUser.message);
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
         return;
       }
 
       if (data.createUser.message) {
         setFormError(data.createUser.message);
-        setSnackbarOpen(true);
         return;
       }
     } catch (error) {
-      setFormError(
-        "Ocorreu um erro ao se registrar. Por favor, tente novamente mais tarde."
-      );
-      setSnackbarOpen(true);
+      setFormError("Houve um erro ao registrar sua conta. Tente novamente mais tarde.");
     }
   };
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+    setFormError("");
+    setFormSuccess("");
   };
 
   const isFormValid = () => {
@@ -445,20 +442,22 @@ export default function Register() {
           </Link>
         </form>
       </Box>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleSnackbarClose}
-          ></IconButton>
-        }
-      />
+      <Stack sx={{ width: "100%" }} spacing={2}>
+        <Snackbar
+          open={Boolean(formError || formSuccess)}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={formError ? "error" : "success"}
+            sx={{ width: "100%" }}
+          >
+            {formError || formSuccess}
+          </Alert>
+        </Snackbar>
+      </Stack>
       <Footer />
     </>
   );

@@ -13,6 +13,9 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../components/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import { Checkbox } from "@mui/material";
 import {
   Box,
   Typography,
@@ -25,7 +28,6 @@ import {
   Grid,
   InputAdornment,
 } from "@mui/material";
-import { Checkbox } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -69,19 +71,30 @@ const CREATE_DONATION = gql`
   }
 `;
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 function NewDonation() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [formError, setFormError] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
   const [newProduct, setNewProduct] = useState(true);
   const [phoneContact, setPhoneContact] = useState("");
   const [hasWhatsapp, setHasWhatsapp] = useState(false);
   const [usePhoneProfile, setUsePhoneProfile] = useState(false);
   const { user } = useAuth();
+
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleImageUpload = (images) => {
     setSelectedImages(images);
@@ -132,12 +145,15 @@ function NewDonation() {
       const { data } = await createDonation({
         variables: { input },
       });
+      setFormSuccess("Doação criada com sucesso!");
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        navigate("/minhas-doacoes");
+      }, 2000);
     } catch (error) {
-      console.log("Error creating donation", error);
+      setFormError(error.message);
+      setSnackbarOpen(true);
     }
-    setTimeout(() => {
-      navigate("/minhas-doacoes");
-    }, 1000);
   };
 
   const handleChange = (event) => {
@@ -433,6 +449,19 @@ function NewDonation() {
         </Grid>
       </Box>
       <Footer />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formError ? "error" : "success"}
+        >
+          {formError || formSuccess}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
