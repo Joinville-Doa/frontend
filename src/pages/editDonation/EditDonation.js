@@ -14,6 +14,8 @@ import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../components/AuthProvider";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Checkbox } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import {
   Box,
   Typography,
@@ -92,13 +94,16 @@ const UPDATE_DONATION = gql`
   }
 `;
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 function EditDonation() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [formError, setFormError] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
   const [newProduct, setNewProduct] = useState(true);
   const [phoneContact, setPhoneContact] = useState("");
@@ -106,6 +111,14 @@ function EditDonation() {
   const [usePhoneProfile, setUsePhoneProfile] = useState(false);
   const { user } = useAuth();
   const { id } = useParams();
+
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleImageUpload = (images) => {
     setSelectedImages(images);
@@ -157,13 +170,15 @@ function EditDonation() {
       const { data } = await updateDonation({
         variables: { input },
       });
+      setFormSuccess("Doação atualiza com sucesso!");
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        navigate("/minhas-doacoes");
+      }, 2000);
     } catch (error) {
-      console.log("Error updating donation", error);
+      setFormError(error.message);
+      setSnackbarOpen(true);
     }
-    setTimeout(() => {
-      navigate("/minhas-doacoes");
-      window.location.reload();
-    }, 1000);
   };
 
   const handleChange = (event) => {
@@ -464,7 +479,7 @@ function EditDonation() {
                 >
                   Salvar
                 </Button>
-                <Link to={"/"}>
+                <Link to={"/minhas-doacoes"}>
                   <Button
                     variant="contained"
                     color="warning"
@@ -480,6 +495,19 @@ function EditDonation() {
         </Grid>
       </Box>
       <Footer />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formError ? "error" : "success"}
+        >
+          {formError || formSuccess}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

@@ -6,11 +6,25 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Grid from "@mui/material/Grid";
 import { Box, Typography, Divider, CircularProgress } from "@mui/material";
 import { Image, CloudinaryContext, Transformation } from "cloudinary-react";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { v4 as uuidv4 } from "uuid";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function ImageUpload({ selectedImages, onImageUpload }) {
   const [logoImage, setLogoImage] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+
+  const handleSnackbarClose = () => {
+    setFormSuccess("");
+    setFormError("");
+  };
 
   const handleImageUpload = async (event) => {
     const files = event.target.files;
@@ -35,19 +49,28 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
           body: formData,
         }
       );
-      const data = await response.json();
-      imageUrls.push(data.secure_url);
+
+      if (response.ok) {
+        const data = await response.json();
+        imageUrls.push(data.secure_url);
+      } else {
+        setFormError("Ocorreu um erro ao carregar as imagens.");
+      }
     }
 
     setIsLoading(false);
 
-    onImageUpload([...selectedImages, ...imageUrls]);
-    setLogoImage(false);
+    if (imageUrls.length > 0) {
+      onImageUpload([...selectedImages, ...imageUrls]);
+      setLogoImage(false);
+      setFormSuccess("Imagens carregadas com sucesso.");
+    }
   };
 
   const handleImageRemove = (index) => {
     const updatedImages = selectedImages.filter((_, i) => i !== index);
     onImageUpload(updatedImages);
+    setFormSuccess("Imagens removida com sucesso.");
   };
 
   return (
@@ -56,7 +79,7 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
         variant="h6"
         component="h2"
         gutterBottom
-        sx={{ fontFamily: "Inter, sans-serif"}}
+        sx={{ fontFamily: "Inter, sans-serif" }}
       >
         Anexar Imagens
       </Typography>
@@ -398,10 +421,26 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
           gutterBottom
           sx={{ fontFamily: "Inter, sans-serif", marginLeft: "15px" }}
         >
-          As imagens devem não ultrapassar o tamanho de 5MB. E pode ser
-          selecionadas no máximo 5 imagens.
+          As imagens não devem ultrapassar o tamanho de 5MB. E você pode
+          selecionar no máximo 5 imagens.
         </Typography>
       </Box>
+      <Stack sx={{ width: "100%" }} spacing={2}>
+        <Snackbar
+          open={Boolean(formError || formSuccess)}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={formError ? "error" : "success"}
+            sx={{ width: "100%" }}
+          >
+            {formError || formSuccess}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </Box>
   );
 }
