@@ -126,7 +126,6 @@ export default function Donations() {
           display: "flex",
           alignItems: "center",
           backgroundColor: "#FFFFFF",
-          opacity: 0.6,
         }}
         InputProps={{
           endAdornment: (
@@ -135,7 +134,7 @@ export default function Donations() {
                 <Search />
               </IconButton>
             </InputAdornment>
-          ),
+          )
         }}
       />
       <Grid container spacing={2} style={{ padding: 50 }}>
@@ -147,6 +146,13 @@ export default function Donations() {
                 maxWidth: 300,
                 marginBottom: 5,
                 padding: 1,
+                boxShadow: 3,
+                borderRadius: 1,
+                "&:hover": {
+                  boxShadow: 5,
+                  borderRadius: 2,
+                  cursor: "pointer",
+                },
               }}
             >
               <CardActionArea>

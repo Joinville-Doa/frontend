@@ -92,6 +92,10 @@ function NewDonation() {
   const [formSuccess, setFormSuccess] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  if (!user) {
+    navigate("*");
+  }
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -124,6 +128,18 @@ function NewDonation() {
       return;
     }
 
+    if (selectedImages.every(image => image === null)) {
+      setFormError("Necessário incluir pelo menos uma imagem.");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (!selectedImages[0]) {
+      const updatedImages = [...selectedImages];
+      updatedImages[0] = selectedImages.find((image) => image !== null);
+      setSelectedImages(updatedImages);
+    }
+
     setFormError("");
 
     const input = {
@@ -147,8 +163,9 @@ function NewDonation() {
       });
       setFormSuccess("Doação criada com sucesso!");
       setSnackbarOpen(true);
+      navigate("/minhas-doacoes");
       setTimeout(() => {
-        navigate("/minhas-doacoes");
+        window.location.reload();
       }, 2000);
     } catch (error) {
       setFormError(error.message);

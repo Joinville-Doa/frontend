@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useAuth } from "../../components/AuthProvider";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useMutation, gql } from "@apollo/client";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+
 import {
   TextField,
   Button,
@@ -57,12 +58,17 @@ export default function MyProfile() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION);
+
+  if (!user) {
+    navigate("*");
+  }
 
   useEffect(() => {
     if (user) {

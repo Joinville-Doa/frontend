@@ -61,7 +61,11 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
     setIsLoading(false);
 
     if (imageUrls.length > 0) {
-      onImageUpload([...selectedImages, ...imageUrls]);
+      if (!selectedImages[0]) {
+        onImageUpload([imageUrls[0], ...selectedImages.slice(1)]);
+      } else {
+        onImageUpload([...selectedImages, ...imageUrls]);
+      }
       setLogoImage(false);
       setFormSuccess("Imagens carregadas com sucesso.");
     }
@@ -115,10 +119,7 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
             position: "relative",
           }}
         >
-          {logoImage && !isLoading && (
-            <AddPhotoAlternateIcon sx={{ fontSize: "100%" }} />
-          )}
-          {!logoImage && selectedImages[0] && (
+          {selectedImages[0] ? (
             <>
               <img
                 src={selectedImages[0]}
@@ -141,7 +142,17 @@ export default function ImageUpload({ selectedImages, onImageUpload }) {
                 <DeleteIcon />
               </IconButton>
             </>
+          ) : (
+            <AddPhotoAlternateIcon />
           )}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+            disabled={selectedImages.length === 5}
+          />
           {isLoading && (
             <CircularProgress
               color="primary"

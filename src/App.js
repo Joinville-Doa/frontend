@@ -11,6 +11,7 @@ import MyDonations from "./pages/myDonations/MyDonations";
 import NewDonation from "./pages/newDonation/NewDonation";
 import EditDonation from "./pages/editDonation/EditDonation";
 import Donation from "./pages/donation/Donation";
+import ErrorPage from "./pages/errorPage/ErrorPage";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/nova-doacao" element={<NewDonation />} />
           <Route path="/editar-doacao/:id" element={<EditDonation />} />
           <Route path="/doacao/:id" element={<Donation />} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>
     </AuthProvider>

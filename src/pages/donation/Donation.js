@@ -11,6 +11,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { useAuth } from "../../components/AuthProvider";
 import {
   Box,
   Dialog,
@@ -46,8 +47,10 @@ const GET_DONATION = gql`
 
 export default function Donation() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
 
   const { loading, error, data } = useQuery(GET_DONATION, {
     variables: { id },
@@ -81,6 +84,18 @@ export default function Donation() {
     newValue = newValue.replace(/(\d{5})(\d)/, "$1-$2");
 
     return newValue;
+  };
+
+  const formatPhoneUserNotLogin = (value) => {
+    let newValue = value.replace(/\D/g, "");
+
+    newValue = newValue.replace(/(\d{2})(\d)/, "($1) $2").slice(0, 14);
+    newValue = newValue.replace(/(\d{5})(\d)/, "$1-$2");
+
+    const lastDigits = newValue.slice(9);
+    const maskedDigits = ".".repeat(lastDigits.length);
+
+    return newValue.replace(lastDigits, maskedDigits);
   };
 
   const handleImageClick = (index) => {
@@ -232,32 +247,46 @@ export default function Donation() {
               Contato
             </Typography>
             <Typography variant="body1">
-              {formatPhone(donation.phoneContact)}
+              {user
+                ? formatPhone(donation.phoneContact)
+                : <Link to={"/login"} style={{textDecoration: "none", color: "#4D4DFC"}}>
+                    <b>{formatPhoneUserNotLogin(donation.phoneContact)}</b>
+                  </Link>
+                  }
             </Typography>
-            <Typography variant="body1">
-              {donation.hasWhatsapp ? (
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{ marginTop: "10px" }}
-                  onClick={() => {
-                    const message = encodeURIComponent(
-                      "Olá, eu vi o anúncio da sua doação no site Joinville Doa. Gostaria de saber se ainda está disponível." + "\n\n" + "Título: " + donation.title + "\n" + "Link: " + window.location.href
-                    );
-                    const url = `https://api.whatsapp.com/send?phone=55${donation.phoneContact}&text=${message}`;
-                    window.open(url, "_blank");
-                  }}
-                >
-                  Entrar em contato via WhatsApp <WhatsAppIcon style={{marginLeft: "10px"}}/>
-                </Button>
-              ) : (
-                <>
-                  <span style={{ fontStyle: "italic" }}>
-                    (Este número não possui WhatsApp)
-                  </span>
-                </>
-              )}
-            </Typography>
+            {user && (
+              <Typography variant="body1">
+                {donation.hasWhatsapp ? (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{ marginTop: "10px" }}
+                    onClick={() => {
+                      const message = encodeURIComponent(
+                        "Olá, eu vi o anúncio da sua doação no site Joinville Doa. Gostaria de saber se ainda está disponível." +
+                          "\n\n" +
+                          "Título: " +
+                          donation.title +
+                          "\n" +
+                          "Link: " +
+                          window.location.href
+                      );
+                      const url = `https://api.whatsapp.com/send?phone=55${donation.phoneContact}&text=${message}`;
+                      window.open(url, "_blank");
+                    }}
+                  >
+                    Entrar em contato via WhatsApp{" "}
+                    <WhatsAppIcon style={{ marginLeft: "10px" }} />
+                  </Button>
+                ) : (
+                  <>
+                    <span style={{ fontStyle: "italic" }}>
+                      (Este número não possui WhatsApp)
+                    </span>
+                  </>
+                )}
+              </Typography>
+            )}
           </Box>
           <Divider
             sx={{ width: "100%", marginTop: "25px", marginBottom: "25px" }}

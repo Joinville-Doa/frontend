@@ -35,7 +35,7 @@ code {
 
 .menu-item:hover {
   font-size: medium;
-  text-shadow: #1e1d1d 0px 0px 1px;
+  text-shadow: #4D4DFC 0px 0px 1px;
 }
 
 .search-input-notched-outline {
@@ -48,4 +48,9 @@ code {
 
 .search-input-hover:hover .MuiOutlinedInput-notchedOutline {
   border: none !important;
+}
+
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #4D4DFC !important;
 }
