@@ -4,7 +4,7 @@ import Footer from "../../components/Footer";
 import { useAuth } from "../../components/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, gql, useQuery } from "@apollo/client";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
@@ -18,6 +18,20 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
+
+const USER_QUERY = gql`
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      id
+      name
+      email
+      documentNumber
+      dateOfBirth
+      acceptTermsOfUse
+      phone
+    }
+  }
+`;
 
 const UPDATE_USER_MUTATION = gql`
   mutation UpdateUser($input: UpdateUserInput!) {
@@ -42,6 +56,16 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 export default function MyProfile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION);
+
+  const { loading: userLoading, data: userData } = useQuery(USER_QUERY, {
+    variables: { id: user?.id },
+    skip: !user,
+  });
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,28 +82,53 @@ export default function MyProfile() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const navigate = useNavigate();
-
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-  const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION);
 
   if (!user) {
     navigate("*");
   }
 
   useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setEmail(user.email);
-      setCPF(user.documentNumber);
-      setDateOfBirth(user.dateOfBirth);
-      setPhone(user.phone);
-      setAcceptTermsOfUse(user.acceptTermsOfUse);
+    if (userData && userData.user) {
+      const {
+        name,
+        email,
+        documentNumber,
+        dateOfBirth,
+        acceptTermsOfUse,
+        phone,
+      } = userData.user;
+      setName(name);
+      setEmail(email);
+      setCPF(documentNumber);
+      setDateOfBirth(dateOfBirth);
+      setAcceptTermsOfUse(acceptTermsOfUse);
+      setPhone(phone);
     }
-  }, [user]);
+  }, [userData]);
+
+  useEffect(() => {
+    setIsSaveEnabled(
+      name !== "" &&
+        cpf !== "" &&
+        dateOfBirth !== "" &&
+        phone !== "" &&
+        email !== "" &&
+        acceptTermsOfUse &&
+        password !== "" &&
+        confirmPassword !== "" &&
+        password === confirmPassword &&
+        password !== user.password
+    );
+  }, [
+    name,
+    cpf,
+    dateOfBirth,
+    phone,
+    email,
+    acceptTermsOfUse,
+    password,
+    confirmPassword,
+  ]);
 
   useEffect(() => {
     setIsSaveEnabled(
