@@ -187,7 +187,6 @@ export default function Donations() {
           </Grid>
         ))}
       </Grid>
-      {isFetchingMore && <p>Carregando mais doações...</p>}
       <Footer />
     </>
   );

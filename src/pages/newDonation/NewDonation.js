@@ -164,9 +164,7 @@ function NewDonation() {
       setFormSuccess("Doação criada com sucesso!");
       setSnackbarOpen(true);
       navigate("/minhas-doacoes");
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      window.location.reload();
     } catch (error) {
       setFormError(error.message);
       setSnackbarOpen(true);
