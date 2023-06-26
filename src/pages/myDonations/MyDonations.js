@@ -95,7 +95,7 @@ export default function MyDonations() {
         });
 
         if (data.deleteDonation.message) {
-          setFormSuccess("Doação atualiza com sucesso!");
+          setFormSuccess("A doação foi excluída.");
           setSnackbarOpen(true);
           setTimeout(() => {
             window.location.reload();
